@@ -1,17 +1,16 @@
 package com.springboot.blog.springbootblogrestapi.entity;
 
+import lombok.*;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.HashSet;
 import java.util.Set;
+
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Table(name = "posts", uniqueConstraints = {@UniqueConstraint(columnNames = {"title"})})
 
 //If don't provide @Table, then JPA will automatically provide name of table as the class.
@@ -35,8 +34,7 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL,orphanRemoval = true)
     //bidirectional (only one relationship with post)
     //set to prevent duplicates. (list allow duplicates)
-    private Set<Comment>comments = new HashSet<>();
-
+    private Set<Comment>comments = new HashSet<>(); //PostDTO will have comments too, and modelmapper helps us map it.
 
 
     @Override

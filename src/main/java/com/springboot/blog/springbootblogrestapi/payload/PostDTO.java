@@ -2,6 +2,8 @@ package com.springboot.blog.springbootblogrestapi.payload;
 
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
 public class PostDTO {
 
@@ -10,6 +12,9 @@ public class PostDTO {
     private String description;
     private String content;
 
+    //display comments in the post DTO
+    private Set<CommentDTO>comments;
+
     @Override
     public String toString() {
         return "Convert post entity to DTO ----> PostDTO{" +
@@ -17,6 +22,7 @@ public class PostDTO {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", content='" + content + '\'' +
+                ", comments=" + comments +
                 '}';
     }
 }

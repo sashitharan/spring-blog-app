@@ -1,18 +1,21 @@
 package com.springboot.blog.springbootblogrestapi.service.impl;
 
+import com.springboot.blog.springbootblogrestapi.entity.Comment;
 import com.springboot.blog.springbootblogrestapi.entity.Post;
 import com.springboot.blog.springbootblogrestapi.exception.ResourceNotFoundException;
 import com.springboot.blog.springbootblogrestapi.payload.PostDTO;
 import com.springboot.blog.springbootblogrestapi.payload.PostResponse;
 import com.springboot.blog.springbootblogrestapi.repository.PostRepository;
 import com.springboot.blog.springbootblogrestapi.service.PostService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,11 +24,17 @@ public class PostServiceImpl implements PostService {
 
     private PostRepository postRepository;
 
-    @Autowired
+    private ModelMapper mapper;
+
+
+
+
 //    Constructor based dependency injection (Best Practice),
 //    If have only 1 constructor in the class, we can omit the @Autowired.
-    public PostServiceImpl(PostRepository postRepository) {
+    @Autowired
+    public PostServiceImpl(PostRepository postRepository, ModelMapper mapper) {
         this.postRepository = postRepository;
+        this.mapper = mapper;
     }
 
     @Override
@@ -59,7 +68,6 @@ public class PostServiceImpl implements PostService {
 //        Pageable pageable = PageRequest.of(pageNumber,pageSize);
 //        Pageable pageable = PageRequest.of(pageNumber,pageSize, Sort.by(sortBy));
         Pageable pageable = PageRequest.of(pageNumber,pageSize,sortOrder);
-
 
         Page<Post> postsFromDatabase = postRepository.findAll(pageable);
 
@@ -152,11 +160,13 @@ public class PostServiceImpl implements PostService {
 
     private PostDTO mapPostEntityFromDatabaseToPostDTO(Post postFromDatabase){
         //Convert post entity to DTO
-        PostDTO postDTO = new PostDTO();
-        postDTO.setId(postFromDatabase.getId());
-        postDTO.setContent(postFromDatabase.getContent());
-        postDTO.setDescription(postFromDatabase.getDescription());
-        postDTO.setTitle(postFromDatabase.getTitle());
+        PostDTO postDTO = mapper.map(postFromDatabase, PostDTO.class);
+
+//        PostDTO postDTO = new PostDTO();
+//        postDTO.setId(postFromDatabase.getId());
+//        postDTO.setContent(postFromDatabase.getContent());
+//        postDTO.setDescription(postFromDatabase.getDescription());
+//        postDTO.setTitle(postFromDatabase.getTitle());
         System.out.println(postDTO.toString());
         return postDTO;
     }
@@ -164,11 +174,13 @@ public class PostServiceImpl implements PostService {
 
     private Post mapPostDTOtoPostEntity(PostDTO postDTOfromUI) {
         //Convert DTO to post entity
-        Post post = new Post();
-        post.setTitle(postDTOfromUI.getTitle());
-        post.setDescription(postDTOfromUI.getDescription());
-        post.setTitle(postDTOfromUI.getTitle());
-        post.setContent(postDTOfromUI.getContent());
+        Post post = mapper.map(postDTOfromUI, Post.class);
+
+//        Post post = new Post();
+//        post.setTitle(postDTOfromUI.getTitle());
+//        post.setDescription(postDTOfromUI.getDescription());
+//        post.setTitle(postDTOfromUI.getTitle());
+//        post.setContent(postDTOfromUI.getContent());
         System.out.println(post.toString());
         return post;
     }
