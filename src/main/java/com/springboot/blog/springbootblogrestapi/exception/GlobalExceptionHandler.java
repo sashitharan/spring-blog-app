@@ -40,19 +40,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BlogAPIException.class)
     public ResponseEntity<ErrorDetailsDTO> handleBlogAPIException(BlogAPIException exception, WebRequest webRequest) {
-        ErrorDetailsDTO errorDetails = new ErrorDetailsDTO(new Date(), exception.getMessage(), webRequest.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+        ErrorDetailsDTO errorDetailsDTO = new ErrorDetailsDTO(new Date(), exception.getMessage(), webRequest.getDescription(false));
+
+        // Convert ErrorDetailsDTO to ErrorDetails
+        ErrorDetails errorDetails = modelMapper.map(errorDetailsDTO, ErrorDetails.class);
+
+        // Save error details to repository
+        errorDetailRepository.save(errorDetails);
+
+        return new ResponseEntity<>(errorDetailsDTO, HttpStatus.BAD_REQUEST);
     }
 
-    /*
-    {
-        "timestamp": "2023-04-22T15:19:15.886+00:00",
-        "status": 404,
-        "error": "Not Found",
-        "message": "No message available",
-        "path": "/api/2posts/292%22"
-    }
-     */
 
 
 
@@ -60,8 +58,15 @@ public class GlobalExceptionHandler {
     // global exceptions
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetailsDTO> handleGlobalException(Exception exception, WebRequest webRequest) {
-        ErrorDetailsDTO errorDetails = new ErrorDetailsDTO(new Date(), exception.getMessage(), webRequest.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+        ErrorDetailsDTO errorDetailsDTO = new ErrorDetailsDTO(new Date(), exception.getMessage(), webRequest.getDescription(false));
+
+        // Convert ErrorDetailsDTO to ErrorDetails
+        ErrorDetails errorDetails = modelMapper.map(errorDetailsDTO, ErrorDetails.class);
+
+        // Save error details to repository
+        errorDetailRepository.save(errorDetails);
+
+        return new ResponseEntity<>(errorDetailsDTO, HttpStatus.INTERNAL_SERVER_ERROR);
     }
     /*
     {
