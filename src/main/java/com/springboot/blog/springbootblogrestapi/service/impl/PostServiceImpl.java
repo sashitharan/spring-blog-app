@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
 
     private PostRepository postRepository;
-
     private ModelMapper mapper;
 
 
