@@ -28,5 +28,22 @@ public class Post {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Override
+    public String toString() {
+        return "Convert DTO to Post Entity ----> Post{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", content='" + content + '\'' +
+                '}';
+    }
 
+    public String toStringForPostDeletion() {
+        return "Deleting this post...{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", content='" + content + '\'' +
+                '}';
+    }
 }
