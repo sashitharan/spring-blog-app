@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,6 +30,14 @@ public class Post {
 
     @Column(name = "content", nullable = false)
     private String content;
+
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL,orphanRemoval = true)
+    //bidirectional (only one relationship with post)
+    //set to prevent duplicates. (list allow duplicates)
+    private Set<Comment>comments = new HashSet<>();
+
+
 
     @Override
     public String toString() {
