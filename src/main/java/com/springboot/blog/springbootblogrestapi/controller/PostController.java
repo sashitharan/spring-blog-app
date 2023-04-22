@@ -1,6 +1,7 @@
 package com.springboot.blog.springbootblogrestapi.controller;
 
 import com.springboot.blog.springbootblogrestapi.payload.PostDTO;
+import com.springboot.blog.springbootblogrestapi.payload.PostResponse;
 import com.springboot.blog.springbootblogrestapi.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.springboot.blog.springbootblogrestapi.utils.AppConstants.*;
 
 @RestController
 @RequestMapping("api/posts")
@@ -22,7 +25,7 @@ public class PostController {
     }
 
 
-//    http://localhost:8080/api/posts/createPost
+    //    http://localhost:8080/api/posts/createPost
     @PostMapping("createPost")
 //    RequestBody converts JSON to Java object.
     public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO) {
@@ -37,30 +40,40 @@ public class PostController {
         return postService.getAllPosts();
     }
 
+    @GetMapping("getAllByPage")
+    public PostResponse getAllPostsByPagination(
+            @RequestParam(value = "pageNo", defaultValue = DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = DEFAULT_PAGE_SORTED_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = DEFAULT_PAGE_SORTED_DIR, required = false) String sortDir
 
-//     Get post by id
+    ) {
+        return postService.getAllPostsByPagination(pageNo, pageSize, sortBy, sortDir);
+    }
+
+
+    //     Get post by id
 //    http://{{localhost}}/api/posts/1
     @GetMapping("/{id}")
-    public ResponseEntity<PostDTO>getPostById(@PathVariable(name="id") long id){
+    public ResponseEntity<PostDTO> getPostById(@PathVariable(name = "id") long id) {
         return ResponseEntity.ok(postService.getPostById(id));
 
     }
 
-//    http://{{localhost}}/api/posts/2
+    //    http://{{localhost}}/api/posts/2
     @PutMapping("/{id}")
-    public ResponseEntity<PostDTO>updatePostById(@RequestBody PostDTO postDTO, @PathVariable(name="id") long id){
-        return ResponseEntity.ok(postService.updatePostById(postDTO,id));
+    public ResponseEntity<PostDTO> updatePostById(@RequestBody PostDTO postDTO, @PathVariable(name = "id") long id) {
+        return ResponseEntity.ok(postService.updatePostById(postDTO, id));
 
     }
 
-//  http://{{localhost}}/api/posts/1
+    //  http://{{localhost}}/api/posts/1
     @DeleteMapping("/{id}")
-    public ResponseEntity<String>deletePostById(@PathVariable(name="id") long id){
+    public ResponseEntity<String> deletePostById(@PathVariable(name = "id") long id) {
         String s = postService.deletePostById(id);
         return new ResponseEntity<>(s, HttpStatus.OK);
 
     }
-
 
 
 }

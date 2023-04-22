@@ -3,11 +3,16 @@ package com.springboot.blog.springbootblogrestapi.service.impl;
 import com.springboot.blog.springbootblogrestapi.entity.Post;
 import com.springboot.blog.springbootblogrestapi.exception.ResourceNotFoundException;
 import com.springboot.blog.springbootblogrestapi.payload.PostDTO;
+import com.springboot.blog.springbootblogrestapi.payload.PostResponse;
 import com.springboot.blog.springbootblogrestapi.repository.PostRepository;
 import com.springboot.blog.springbootblogrestapi.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +47,69 @@ public class PostServiceImpl implements PostService {
         List<PostDTO> collect = postsFromDatabase.stream().map(post -> mapPostEntityFromDatabaseToPostDTO(post)).collect(Collectors.toList());
         return collect;
     }
+
+    @Override
+    public PostResponse getAllPostsByPagination(int pageNumber, int pageSize, String sortBy, String sortDir) {
+
+        //Sort object in ascending and or descending order
+        Sort sortOrder = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending(): Sort.by(sortBy).descending();
+
+
+//        Create Pageable instance
+//        Pageable pageable = PageRequest.of(pageNumber,pageSize);
+//        Pageable pageable = PageRequest.of(pageNumber,pageSize, Sort.by(sortBy));
+        Pageable pageable = PageRequest.of(pageNumber,pageSize,sortOrder);
+
+
+        Page<Post> postsFromDatabase = postRepository.findAll(pageable);
+
+        //Get content from page objects
+        List<Post> listOfPosts = postsFromDatabase.getContent();
+
+        //convert list of posts to a list of postDTOs
+        List<PostDTO> collectedPostDTOsList = listOfPosts.stream().map(post -> mapPostEntityFromDatabaseToPostDTO(post)).collect(Collectors.toList());
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.setContent(collectedPostDTOsList);
+        postResponse.setPageNo(postsFromDatabase.getNumber());
+        postResponse.setPageSize(postsFromDatabase.getSize());
+        postResponse.setTotalPages(postsFromDatabase.getTotalPages());
+        postResponse.setTotalElements(postsFromDatabase.getTotalElements());
+        postResponse.setSortOrder(sortDir);
+        postResponse.setLast(postsFromDatabase.isLast());
+        return postResponse;
+
+
+        /*
+        Example
+        GET http://{{localhost}}/api/posts/getAllByPage?pageNo=1&pageSize=2
+        {
+              {
+                "content": [
+                    {
+                        "id": 13,
+                        "title": "Test 1",
+                        "description": "Dogs and Cats",
+                        "content": "Animals"
+                    },
+                    {
+                        "id": 14,
+                        "title": "Test 123",
+                        "description": "Dogs and Cats",
+                        "content": "Animals"
+                    }
+                ],
+                "pageNo": 1,
+                "pageSize": 2,
+                "totalElements": 14,
+                "totalPages": 7,
+                "last": false
+            }
+        }
+         */
+
+    }
+
 
 
     @Override
