@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class PostController {
 
 
     //    http://localhost:8080/api/posts/createPost
+    @PreAuthorize("hasRole('ADMIN')") //only admin can access this api
     @PostMapping("createPost")
 //    RequestBody converts JSON to Java object.
     public ResponseEntity<PostDTO> createPost(@Valid @RequestBody PostDTO postDTO) {
@@ -35,6 +37,7 @@ public class PostController {
         return ResponseEntity.ok(createdPost);
 //       return new ResponseEntity<>(postService.createPost(postDTO), HttpStatus.CREATED);
     }
+
 
     @GetMapping("getAll")
     public List<PostDTO> getAllPosts() {
@@ -53,7 +56,7 @@ public class PostController {
     }
 
 
-    //     Get post by id
+    //        Get post by id
 //    http://{{localhost}}/api/posts/1
     @GetMapping("/{id}")
     public ResponseEntity<PostDTO> getPostById(@PathVariable(name = "id") long id) {
@@ -61,14 +64,15 @@ public class PostController {
 
     }
 
-    //    http://{{localhost}}/api/posts/2
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<PostDTO> updatePostById(@RequestBody PostDTO postDTO, @PathVariable(name = "id") long id) {
         return ResponseEntity.ok(postService.updatePostById(postDTO, id));
 
     }
 
-    //  http://{{localhost}}/api/posts/1
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePostById(@PathVariable(name = "id") long id) {
         String s = postService.deletePostById(id);
