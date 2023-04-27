@@ -9,6 +9,7 @@ public class AppConstants {
     public static final String DEFAULT_PAGE_SIZE = "10";
     public static final String DEFAULT_PAGE_SORTED_BY = "id";
     public static final String DEFAULT_PAGE_SORTED_DIR = "asc";
+    public static final String ROLE_USER = "ROLE_USER";
 
 
 
