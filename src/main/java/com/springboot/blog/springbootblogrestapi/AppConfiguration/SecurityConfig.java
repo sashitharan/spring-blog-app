@@ -1,9 +1,11 @@
-package com.springboot.blog.springbootblogrestapi;
+package com.springboot.blog.springbootblogrestapi.AppConfiguration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -17,6 +19,21 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
+
+
+    private UserDetailsService userDetailsService;
+
+    public SecurityConfig(UserDetailsService userDetailsService){
+        this.userDetailsService = userDetailsService;
+    }
+
+
+
+    //Authentication manager automatically uses userDetailsService to get user info from database and also uses passwordEncoder to encode or decode the password.
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
 
 
     @Bean
@@ -39,12 +56,12 @@ public class SecurityConfig {
         return httpSecurity.build();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user2 = User.builder().username("user2").password(passwordEncoder().encode("user2")).roles("USER").build();
-        UserDetails admin = User.builder().username("admin").password(passwordEncoder().encode("admin")).roles("ADMIN").build();
-        return new InMemoryUserDetailsManager(user2, admin);
-
-    }
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        UserDetails user2 = User.builder().username("user2").password(passwordEncoder().encode("user2")).roles("USER").build();
+//        UserDetails admin = User.builder().username("admin").password(passwordEncoder().encode("admin")).roles("ADMIN").build();
+//        return new InMemoryUserDetailsManager(user2, admin);
+//
+//    }
 
 }
