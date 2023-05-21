@@ -1,5 +1,6 @@
 package com.springboot.blog.springbootblogrestapi.controller;
 
+import com.springboot.blog.springbootblogrestapi.payload.JWTAuthResponseDTO;
 import com.springboot.blog.springbootblogrestapi.payload.LoginDTO;
 import com.springboot.blog.springbootblogrestapi.payload.RegisterDTO;
 import com.springboot.blog.springbootblogrestapi.service.AuthService;
@@ -25,9 +26,13 @@ public class AuthController {
 //    Build Login REST API
 
     @PostMapping(value={"/login","/signin"})
-    public ResponseEntity<String>login(@RequestBody LoginDTO loginDTO){
-        String response = authService.login(loginDTO);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<JWTAuthResponseDTO>login(@RequestBody LoginDTO loginDTO){
+        String token = authService.login(loginDTO);
+
+        JWTAuthResponseDTO jwtAuthResponseDTO = new JWTAuthResponseDTO();
+        jwtAuthResponseDTO.setAccessToken(token);
+        System.out.println(jwtAuthResponseDTO.toString());
+        return ResponseEntity.ok(jwtAuthResponseDTO); //return jwt token response in the api
     }
 
 

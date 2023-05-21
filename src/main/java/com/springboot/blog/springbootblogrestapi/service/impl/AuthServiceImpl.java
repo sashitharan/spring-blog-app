@@ -7,6 +7,7 @@ import com.springboot.blog.springbootblogrestapi.payload.LoginDTO;
 import com.springboot.blog.springbootblogrestapi.payload.RegisterDTO;
 import com.springboot.blog.springbootblogrestapi.repository.RoleRepository;
 import com.springboot.blog.springbootblogrestapi.repository.UserRepository;
+import com.springboot.blog.springbootblogrestapi.security.JWTTokenProvider;
 import com.springboot.blog.springbootblogrestapi.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,14 +32,18 @@ public class AuthServiceImpl implements AuthService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
+    private JWTTokenProvider jwtTokenProvider;
 
     @Autowired
-    public AuthServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public AuthServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, JWTTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
+
+
 
     @Override
     public String login(LoginDTO loginDTO) {
@@ -48,7 +53,13 @@ public class AuthServiceImpl implements AuthService {
 
         // spring security context holder
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return "User Logged in Successfully.";
+
+
+        // After successful authentication, we create the jwt token
+        String token = jwtTokenProvider.generateToken(authentication);
+
+
+        return token;
     }
 
     @Override
