@@ -1,10 +1,12 @@
 package com.springboot.blog.springbootblogrestapi.service.impl;
 
+import com.springboot.blog.springbootblogrestapi.entity.Category;
 import com.springboot.blog.springbootblogrestapi.entity.Comment;
 import com.springboot.blog.springbootblogrestapi.entity.Post;
 import com.springboot.blog.springbootblogrestapi.exception.ResourceNotFoundException;
 import com.springboot.blog.springbootblogrestapi.payload.PostDTO;
 import com.springboot.blog.springbootblogrestapi.payload.PostResponse;
+import com.springboot.blog.springbootblogrestapi.repository.CategoryRepository;
 import com.springboot.blog.springbootblogrestapi.repository.PostRepository;
 import com.springboot.blog.springbootblogrestapi.service.PostService;
 import org.modelmapper.ModelMapper;
@@ -25,22 +27,27 @@ public class PostServiceImpl implements PostService {
     private PostRepository postRepository;
     private ModelMapper mapper;
 
+    private CategoryRepository categoryRepository;
 
 
-
-//    Constructor based dependency injection (Best Practice),
-//    If have only 1 constructor in the class, we can omit the @Autowired.
-    @Autowired
-    public PostServiceImpl(PostRepository postRepository, ModelMapper mapper) {
+//        Constructor based dependency injection (Best Practice),
+//    If you have only 1 constructor in the class, we can omit the @Autowired.
+    public PostServiceImpl(PostRepository postRepository, ModelMapper mapper, CategoryRepository categoryRepository) {
         this.postRepository = postRepository;
         this.mapper = mapper;
+        this.categoryRepository = categoryRepository;
     }
+
+
 
     @Override
     public PostDTO createPost(PostDTO postDTO) {
 
+        Category category = categoryRepository.findById(postDTO.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException("Category", "id", postDTO.getCategoryId()));
+
         //Convert DTO to entity
         Post post = mapPostDTOtoPostEntity(postDTO);
+        post.setCategory(category);
         Post savedPostInDatabase = postRepository.save(post); // save to Repository
 
         //convert Entity to DTO to pass controller to pass to UI
@@ -132,10 +139,13 @@ public class PostServiceImpl implements PostService {
         //get post entity with the id from the database
         Post post  = postRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Post","id",id));
 
+        Category category = categoryRepository.findById(postDTO.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException("Category", "id", postDTO.getId()));
+
         // update that field from the database with the id.
         post.setContent(postDTO.getContent());
         post.setTitle(postDTO.getTitle());
         post.setDescription(postDTO.getDescription());
+        post.setCategory(category);
         Post savedPost = postRepository.save(post);
         return mapPostEntityFromDatabaseToPostDTO(savedPost);
 
@@ -154,6 +164,15 @@ public class PostServiceImpl implements PostService {
         System.out.println("Post Deleted Successfully");
         return "Post Deleted Successfully";
 
+    }
+
+    @Override
+    public List<PostDTO> getPostByCategory(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow(()-> new ResourceNotFoundException("Category","id",categoryId));
+        List<Post>posts = postRepository.findByCategoryId(category.getId());
+
+        //convert list of post jpa entities into list of post DTO.
+        return posts.stream().map((postJPAEntities) -> mapper.map(postJPAEntities, PostDTO.class)).collect(Collectors.toList());
     }
 
 

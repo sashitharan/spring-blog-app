@@ -13,7 +13,7 @@ import java.util.Set;
 @Setter
 @Table(name = "posts", uniqueConstraints = {@UniqueConstraint(columnNames = {"title"})})
 
-//If don't provide @Table, then JPA will automatically provide name of table as the class.
+//If you don't provide @Table, then JPA will automatically provide name of table as the class.
 public class Post {
 
     @Id
@@ -21,7 +21,7 @@ public class Post {
     private Long id;
 
     @Column(name = "title", nullable = false)
-    //if don't provide then JPA is smart enough to take the name from the parameters.
+    //if you don't provide then JPA is smart enough to take the name from the parameters.
     private String title;
 
     @Column(name = "description", nullable = false)
@@ -34,7 +34,12 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL,orphanRemoval = true)
     //bidirectional (only one relationship with post)
     //set to prevent duplicates. (list allow duplicates)
-    private Set<Comment>comments = new HashSet<>(); //PostDTO will have comments too, and modelmapper helps us map it.
+    private Set<Comment>comments = new HashSet<>(); //PostDTO will have comments too, and model mapper helps us map it.
+
+
+    @JoinColumn(name = "category_id")
+    @ManyToOne(fetch = FetchType.LAZY) //many post belong to one category
+    private Category category;
 
 
     @Override

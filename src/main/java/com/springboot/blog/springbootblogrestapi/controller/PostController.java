@@ -80,5 +80,12 @@ public class PostController {
 
     }
 
+    @GetMapping("/getPostByCategories/{id}")
+    public ResponseEntity<List<PostDTO>> getPostByCategories(@PathVariable("id") Long categoryId){
+        List<PostDTO> postByCategory = postService.getPostByCategory(categoryId);
+        return ResponseEntity.ok(postByCategory);
+
+    }
+
 
 }

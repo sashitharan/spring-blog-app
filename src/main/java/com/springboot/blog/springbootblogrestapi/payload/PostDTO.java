@@ -27,6 +27,8 @@ public class PostDTO {
     //display comments in the post DTO
     private Set<CommentDTO>comments;
 
+    private Long categoryId;
+
     @Override
     public String toString() {
         return "Convert post entity to DTO ----> PostDTO{" +

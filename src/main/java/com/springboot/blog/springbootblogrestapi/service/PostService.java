@@ -18,6 +18,8 @@ public interface PostService {
 
     String deletePostById(long id);
 
+    List<PostDTO> getPostByCategory(Long categoryId);
+
 
 }
 

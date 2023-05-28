@@ -16,7 +16,6 @@ import java.util.List;
 @RequestMapping("/api/v1")
 public class CommentController {
 
-    @Autowired
     private CommentService commentService;
 
     public CommentController(CommentService commentService) {
