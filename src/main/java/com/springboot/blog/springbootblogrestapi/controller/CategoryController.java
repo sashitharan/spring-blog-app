@@ -3,6 +3,7 @@ package com.springboot.blog.springbootblogrestapi.controller;
 import com.springboot.blog.springbootblogrestapi.entity.Category;
 import com.springboot.blog.springbootblogrestapi.payload.CategoryDTO;
 import com.springboot.blog.springbootblogrestapi.service.CategoryService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
+@Tag(name = "CRUD REST APIs For Categories")
 public class CategoryController {
 
     @Autowired

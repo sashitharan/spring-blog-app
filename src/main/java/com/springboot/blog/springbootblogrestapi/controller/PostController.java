@@ -3,6 +3,10 @@ package com.springboot.blog.springbootblogrestapi.controller;
 import com.springboot.blog.springbootblogrestapi.payload.PostDTO;
 import com.springboot.blog.springbootblogrestapi.payload.PostResponse;
 import com.springboot.blog.springbootblogrestapi.service.PostService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +20,8 @@ import static com.springboot.blog.springbootblogrestapi.utils.AppConstants.*;
 
 @RestController
 @RequestMapping("api/posts")
+@Tag(name = "CRUD REST APIs For Post Resources")
+
 public class PostController {
 
     private PostService postService;
@@ -28,8 +34,11 @@ public class PostController {
 
 
     //    http://localhost:8080/api/posts/createPost
+    @SecurityRequirement(name="Bearer Authentication")
     @PreAuthorize("hasRole('ADMIN')") //only admin can access this api
     @PostMapping("createPost")
+    @Operation(summary = "Create Post REST API",description = "Create a Post to save post into Database")
+    @ApiResponse(responseCode = "201 created",description = "HTTP Status 201 Created")
 //    RequestBody converts JSON to Java object.
     public ResponseEntity<PostDTO> createPost(@Valid @RequestBody PostDTO postDTO) {
 
