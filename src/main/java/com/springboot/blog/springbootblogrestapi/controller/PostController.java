@@ -34,7 +34,6 @@ public class PostController {
         this.postService = postService;
     }
 
-
     //    http://localhost:8080/api/posts/createPost
     @SecurityRequirement(name="Bearer Authentication")
     @PreAuthorize("hasRole('ADMIN')") //only admin can access this api
