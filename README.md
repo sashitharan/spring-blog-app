@@ -1,4 +1,4 @@
-# spring-blog-app
+# my-blog-app
 https://fsymbols.com/generators/carty/  
 
 
